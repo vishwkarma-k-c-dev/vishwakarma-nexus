@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { 
   Users, 
   Briefcase, 
@@ -13,13 +14,30 @@ import { SEO } from '@/shared/components/SEO';
 import { ScrollToTop } from '@/shared/components/ScrollToTop';
 
 // Sub-components
-import { ProfessionalsHub, OfficialsDirectory, MatrimonyPortal, EducationHub } from '../components';
+import { ComingSoonHub } from '../components';
 
 export const NetworkHub = () => {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'professionals' | 'officials' | 'matrimony' | 'education'>('professionals');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab') as 'professionals' | 'officials' | 'matrimony' | 'education';
+  const initialTab = ['professionals', 'officials', 'matrimony', 'education'].includes(tabParam || '')
+    ? tabParam
+    : 'professionals';
 
-  const tabs = [
+  const [activeTab, setActiveTab] = useState<'professionals' | 'officials' | 'matrimony' | 'education'>(initialTab);
+
+  useEffect(() => {
+    if (tabParam && ['professionals', 'officials', 'matrimony', 'education'].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
+
+  const handleTabChange = (tabId: 'professionals' | 'officials' | 'matrimony' | 'education') => {
+    setActiveTab(tabId);
+    setSearchParams({ tab: tabId });
+  };
+
+  const tabs: Array<{ id: 'professionals' | 'officials' | 'matrimony' | 'education'; label: string; icon: React.ReactNode; color: string; bg: string }> = [
     { id: 'professionals', label: t('network.hub.tabs.professionals'), icon: <Briefcase size={18} />, color: 'text-blue-600', bg: 'bg-blue-50' },
     { id: 'officials', label: t('network.hub.tabs.officials'), icon: <Gavel size={18} />, color: 'text-saffron-600', bg: 'bg-saffron-50' },
     { id: 'education', label: t('network.hub.tabs.education'), icon: <GraduationCap size={18} />, color: 'text-emerald-600', bg: 'bg-emerald-50' },
@@ -70,7 +88,7 @@ export const NetworkHub = () => {
            {tabs.map((tab) => (
              <button
                key={tab.id}
-               onClick={() => setActiveTab(tab.id as any)}
+               onClick={() => handleTabChange(tab.id)}
                className={`flex items-center gap-3 px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all whitespace-nowrap
                  ${activeTab === tab.id 
                    ? `${tab.bg} ${tab.color} shadow-lg shadow-black/5 ring-1 ring-stone-900/5` 
@@ -95,10 +113,7 @@ export const NetworkHub = () => {
                 transition={{ duration: 0.3 }}
                 className="w-full"
              >
-                {activeTab === 'professionals' && <ProfessionalsHub />}
-                {activeTab === 'officials' && <OfficialsDirectory />}
-                {activeTab === 'education' && <EducationHub />}
-                {activeTab === 'matrimony' && <MatrimonyPortal />}
+                <ComingSoonHub activeTab={activeTab} />
              </motion.div>
           </AnimatePresence>
         </div>

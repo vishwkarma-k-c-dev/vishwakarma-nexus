@@ -1,30 +1,32 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Megaphone, ArrowUpRight, X } from 'lucide-react';
 import { AnniversaryModal } from './AnniversaryModal';
-import { MatrimonyModal } from './MatrimonyModal';
+import { SocialLinks } from '@/shared/ui/SocialLinks';
+
+interface Announcement {
+  id: string;
+  en: string;
+  te: string;
+  hi: string;
+}
 
 export const AnnouncementTicker = () => {
   const { t, i18n } = useTranslation();
-  const [isMatrimonyModalOpen, setIsMatrimonyModalOpen] = useState(false);
+  const navigate = useNavigate();
   const [isAnniversaryModalOpen, setIsAnniversaryModalOpen] = useState(false);
   const [isListOpen, setIsListOpen] = useState(false);
 
-  useEffect(() => {
-    const shown = sessionStorage.getItem('vkc_anniversary_modal_shown');
-    if (!shown) {
-      setIsAnniversaryModalOpen(true);
-      sessionStorage.setItem('vkc_anniversary_modal_shown', 'true');
-    }
-  }, []);
+  // Auto-popup disabled as anniversary has successfully concluded.
   
   const announcements = [
     {
       id: "anniversary",
-      en: "🎉 VKC 10th Anniversary Decennial Celebrations Today (5:00 PM - 9:30 PM) at Hyderabad. Graced by Hon'ble Minister Smt Seethakka garu, Chief Guest ACP Brahmasri K.M. Kiran Kumar Sir & 20+ State Leaders! Join us!",
-      te: "🎉 VKC 10వ వార్షికోత్సవం: మంత్రి శ్రీమతి సీతక్క గారు, ACP బ్రహ్మశ్రీ K.M కిరణ్ కుమార్ సర్ మరియు 20+ ప్రముఖుల సమక్షంలో. సాయంత్రం 5:00 గంటలకు సుందరయ్య విజ్ఞాన కేంద్రం, హైదరాబాద్‌లో కలుద్దాం! 🙏",
-      hi: "🎉 वीकेसी 10वीं वर्षगांठ दशकीय समारोह आज (शाम 5:00 बजे) हैदराबाद में। माननीय मंत्री श्रीमती सीतक्का गारू, मुख्य अतिथि एसीपी ब्रह्मश्री के.एम. किरण कुमार सर और 20+ गणमान्य व्यक्तियों की गरिमामयी उपस्थिति में!"
+      en: "🎉 VKC 10th Anniversary Decennial Celebrations successfully concluded! We express our heartfelt gratitude to Smt Seethakka garu (Minister), ACP Brahmasri K.M. Kiran Kumar Sir, and all community members who made it historic.",
+      te: "🎉 VKC 10వ వార్షికోత్సవ దశాబ్ది ఉత్సవాలు విజయవంతంగా ముగిసాయి! గౌరవనీయులైన మంత్రి శ్రీమతి సీతక్క గారికి, ACP బ్రహ్మశ్రీ K.M కిరణ్ కుమార్ గారికి మరియు సహకరించిన సంఘ సభ్యులందరికీ ధన్యవాదాలు.",
+      hi: "🎉 वीकेसी 10वीं वर्षगांठ दशकीय समारोह सफलतापूर्वक संपन्न हुआ! माननीय मंत्री श्रीमती सीतक्का गारू, मुख्य अतिथि एसीपी ब्रह्मश्री के.एम. किरण कुमार सर और सभी समाज बंधुओं का सहृदय आभार।"
     },
     {
       id: "matrimony",
@@ -78,7 +80,7 @@ export const AnnouncementTicker = () => {
                   key={i} 
                   onClick={() => {
                     if (ann.id === 'matrimony') {
-                      setIsMatrimonyModalOpen(true);
+                      navigate('/network?tab=matrimony');
                     } else if (ann.id === 'anniversary') {
                       setIsAnniversaryModalOpen(true);
                     }
@@ -86,7 +88,7 @@ export const AnnouncementTicker = () => {
                   className="flex items-center gap-4 group cursor-pointer"
                 >
                   <span className="text-xs font-bold tracking-wide italic opacity-90 group-hover:opacity-100 transition-opacity">
-                    { (ann as any)[i18n.language] || (ann as any)['en'] }
+                    { ann[i18n.language as keyof Announcement] || ann.en }
                   </span>
                   <div className="bg-white/20 p-1 rounded-full group-hover:bg-white group-hover:text-vermilion transition-all">
                     <ArrowUpRight size={10} />
@@ -94,6 +96,12 @@ export const AnnouncementTicker = () => {
                 </div>
               ))}
             </motion.div>
+          </div>
+
+          {/* New Social Utility Nav */}
+          <div className="hidden lg:flex items-center gap-2 pl-4 border-l border-white/20">
+             <span className="text-[8px] font-black uppercase tracking-widest text-white/60 mr-2">Official Handles:</span>
+             <SocialLinks size={18} iconClassName="hover:scale-110 transition-transform text-white opacity-80 hover:opacity-100" />
           </div>
         </div>
       </div>
@@ -148,7 +156,7 @@ export const AnnouncementTicker = () => {
                         onClick={() => {
                           if (ann.id === 'matrimony') {
                             setIsListOpen(false);
-                            setIsMatrimonyModalOpen(true);
+                            navigate('/network?tab=matrimony');
                           } else if (ann.id === 'anniversary') {
                             setIsListOpen(false);
                             setIsAnniversaryModalOpen(true);
@@ -165,7 +173,7 @@ export const AnnouncementTicker = () => {
                         </div>
                         <div className="flex-1 space-y-1">
                           <p className="text-[11px] leading-relaxed font-medium text-stone-200">
-                            {(ann as any)[i18n.language] || (ann as any)['en']}
+                            {ann[i18n.language as keyof Announcement] || ann.en}
                           </p>
                           {isClickable && (
                             <span className="inline-flex items-center gap-1 text-[8px] font-black uppercase tracking-wider text-vermilion">
@@ -183,12 +191,6 @@ export const AnnouncementTicker = () => {
           </div>
         )}
       </AnimatePresence>
-
-      {/* Matrimony Coming Soon Modal */}
-      <MatrimonyModal 
-        isOpen={isMatrimonyModalOpen}
-        onClose={() => setIsMatrimonyModalOpen(false)}
-      />
 
       {/* Anniversary Modal Integration */}
       <AnniversaryModal 

@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   ArrowRight
 } from 'lucide-react';
+import { SectionBadge } from '@/shared/ui/SectionBadge';
 import { Link } from 'react-router-dom';
 
 export const AboutSection = () => {
@@ -61,12 +62,7 @@ export const AboutSection = () => {
               viewport={{ once: true }}
               className="space-y-6"
             >
-              <div className="flex items-center gap-4">
-                 <div className="h-[2px] w-12 bg-vermilion" />
-                 <span className="text-xs font-black text-vermilion uppercase tracking-[0.4em]">
-                    {t('about.badge')}
-                 </span>
-              </div>
+              <SectionBadge label={t('about.badge')} />
               <h2 className={`text-4xl md:text-5xl lg:text-6xl font-black text-stone-900 leading-tight font-display 
                 ${isTelugu ? 'font-telugu' : isHindi ? 'font-hindi' : ''}`}>
                 {t('about.title')}
@@ -152,7 +148,7 @@ export const AboutSection = () => {
                   {t('about.telanganaDesc')}
                 </p>
                 <Link to="/vision" className="inline-flex items-center gap-4 text-vermilion text-xs font-black uppercase tracking-widest hover:gap-6 transition-all group">
-                   {t('about.mandate_link' as any)} <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                   {t('about.mandate_link' as never)} <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
             </motion.div>
@@ -166,7 +162,7 @@ export const AboutSection = () => {
             >
               <ShieldCheck className="text-stone-400" size={32} />
               <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest leading-tight">
-                {t('about.authority' as any)}
+                {t('about.authority' as never)}
               </p>
             </motion.div>
           </div>
